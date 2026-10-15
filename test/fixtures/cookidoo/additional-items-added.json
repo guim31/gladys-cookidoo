@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "id": "01JBQGDMRMR7RJW1C8AWDGD6YP",
+      "name": "Fleisch",
+      "isOwned": false
+    },
+    {
+      "id": "01JBQGDMRNHAM7AMCR6YKPYKJQ",
+      "name": "Fisch",
+      "isOwned": false
+    }
+  ]
+}

@@ -1,30 +1,37 @@
 // -----------------------------------------------------------------------------
 // Integration configuration.
 //
-// The configuration is filled in by the user in Gladys, from the `config_schema`
-// declared in `gladys-assistant-integration.json`. The SDK fetches it for you
-// (`gladys.getConfig()`) and notifies you of every change through
-// `gladys.onConfigUpdated()`.
+// Filled in by the user from the `config_schema` of the manifest; this module
+// gives the defaults and normalizes the received object, so the rest of the
+// code never deals with `undefined` or with a number sent as a string.
 //
-// This module only provides defaults and normalizes the received object, so the
-// rest of the code never has to deal with `undefined`.
+// The Cookidoo account lives on one country host (cookidoo.fr, cookidoo.de…,
+// cookidoo.international for the countries without their own site) and serves
+// its content in one of the languages of that country: both come from the
+// table of cookidoo-api (src/cookidoo/markets.json, MIT).
 // -----------------------------------------------------------------------------
 
-// Defaults: they MUST stay consistent with the `default` values declared in the
-// `config_schema` of the manifest.
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+
+/** Country code → { host, languages } (from cookidoo-api's localization table). */
+export const MARKETS = require('./cookidoo/markets.json');
+
+/** Languages of the texts the integration produces (feature names, states). */
+export const LANGUAGES = ['en', 'fr', 'de', 'es'];
+
+/** Minutes between two reads of the shopping list and the week plan. */
+export const REFRESH_MINUTES = ['2', '5', '10', '15', '30'];
+
+// Defaults: they MUST stay consistent with the `default` values of the manifest.
 export const DEFAULT_CONFIG = {
-  latitude: 48.8566, // Paris
-  longitude: 2.3522,
-  unit: 'celsius', // 'celsius' | 'fahrenheit'
-  // Seconds between two reads of the polled sensors. Gladys polls at most once
-  // a minute: slower intervals are applied by skipping polls (see
-  // createPoller in src/devices/index.js).
-  poll_frequency: 300,
-  // Reserved key (NOT in config_schema): because the manifest declares both
-  // 'local' and 'cloud' in its `transports` field, Gladys shows a standard
-  // "Prefer the local connection" toggle and sends the user's choice here.
-  // Read-only for the integration; defaults to true.
-  GLADYS_PREFER_LOCAL: true,
+  email: '',
+  password: '',
+  country: 'fr',
+  cookidoo_language: 'auto',
+  language: 'fr',
+  refresh_minutes: '5',
 };
 
 /**
@@ -32,14 +39,48 @@ export const DEFAULT_CONFIG = {
  * @param {Record<string, unknown>} raw config returned by the SDK
  */
 export function normalizeConfig(raw = {}) {
+  const country = String(raw.country ?? DEFAULT_CONFIG.country)
+    .trim()
+    .toLowerCase();
+  const language = String(raw.language ?? DEFAULT_CONFIG.language);
+  const refresh = String(raw.refresh_minutes ?? DEFAULT_CONFIG.refresh_minutes);
   return {
-    ...DEFAULT_CONFIG,
-    ...raw,
-    // Force the types: config may arrive as strings from a form.
-    latitude: Number(raw.latitude ?? DEFAULT_CONFIG.latitude),
-    longitude: Number(raw.longitude ?? DEFAULT_CONFIG.longitude),
-    poll_frequency: Number(raw.poll_frequency ?? DEFAULT_CONFIG.poll_frequency),
-    // The preference is a boolean; anything but an explicit false means true.
-    GLADYS_PREFER_LOCAL: raw.GLADYS_PREFER_LOCAL !== false,
+    email: String(raw.email ?? '').trim(),
+    password: String(raw.password ?? ''),
+    country: MARKETS[country] ? country : DEFAULT_CONFIG.country,
+    cookidoo_language: String(raw.cookidoo_language ?? DEFAULT_CONFIG.cookidoo_language).trim(),
+    language: LANGUAGES.includes(language) ? language : DEFAULT_CONFIG.language,
+    refresh_minutes: REFRESH_MINUTES.includes(refresh) ? refresh : DEFAULT_CONFIG.refresh_minutes,
   };
+}
+
+/** The integration can only sign in once the e-mail and the password are set. */
+export function isConfigured(config) {
+  return Boolean(config.email && config.password);
+}
+
+/** Milliseconds between two refreshes. */
+export function refreshPeriodMs(config) {
+  return Number(config.refresh_minutes) * 60 * 1000;
+}
+
+/**
+ * The Cookidoo host and content language of the account. `auto` picks the
+ * language of the country matching the integration's language (fr-FR for
+ * French on cookidoo.fr, de-CH for German on cookidoo.ch…), else the
+ * country's first one; a language the country does not offer falls back the
+ * same way.
+ * @param {ReturnType<typeof normalizeConfig>} config
+ * @returns {{ country: string, host: string, language: string }}
+ */
+export function resolveMarket(config) {
+  const market = MARKETS[config.country] ?? MARKETS[DEFAULT_CONFIG.country];
+  const country = MARKETS[config.country] ? config.country : DEFAULT_CONFIG.country;
+  let language = market.languages.find((lang) => lang === config.cookidoo_language);
+  if (!language) {
+    language =
+      market.languages.find((lang) => lang.split('-')[0] === config.language) ??
+      market.languages[0];
+  }
+  return { country, host: market.host, language };
 }

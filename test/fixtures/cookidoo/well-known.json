@@ -1,0 +1,114 @@
+{
+  "community/profile": {
+    "_links": {
+      "community-profile:user-private-profile": {
+        "href": "https://cookidoo.de/community/profile/{lang}"
+      }
+    }
+  },
+  "customer-devices": {
+    "_links": {
+      "customer-devices:thermomix-versions": {
+        "href": "https://cookidoo.de/customer-devices/api/my-devices/versions"
+      }
+    }
+  },
+  "created-recipes": {
+    "_links": {
+      "customer-recipes:recipe-create": {
+        "href": "https://cookidoo.de/created-recipes/{lang}"
+      },
+      "customer-recipes:recipe-details": {
+        "href": "https://cookidoo.de/created-recipes/{lang}/{id}"
+      }
+    }
+  },
+  "profile": {
+    "_links": {
+      "fint:login": {
+        "href": "/profile/{lang}/login{?redirectAfterLogin}"
+      }
+    }
+  },
+  "organize": {
+    "_links": {
+      "organize:api-custom-list": {
+        "href": "https://cookidoo.de/organize/{lang}/api/custom-list"
+      },
+      "organize:api-custom-list-modify": {
+        "href": "https://cookidoo.de/organize/{lang}/api/custom-list/{id}"
+      },
+      "organize:api-custom-list-recipe": {
+        "href": "https://cookidoo.de/organize/{lang}/api/custom-list/{id}/recipes/{recipeId}"
+      },
+      "organize:api-managed-list": {
+        "href": "https://cookidoo.de/organize/{lang}/api/managed-list"
+      },
+      "organize:api-managed-list-single": {
+        "href": "https://cookidoo.de/organize/{lang}/api/managed-list/{id}"
+      }
+    }
+  },
+  "ownership": {
+    "_links": {
+      "ownership:subscriptions": {
+        "href": "https://cookidoo.de/ownership/subscriptions"
+      }
+    }
+  },
+  "shopping": {
+    "_links": {
+      "pantry:add-additional-items-v2": {
+        "href": "https://cookidoo.de/shopping/{lang}/additional-items/add"
+      },
+      "pantry:edit-additional-items": {
+        "href": "https://cookidoo.de/shopping/{lang}/additional-items/edit"
+      },
+      "pantry:edit-additional-items-ownership": {
+        "href": "https://cookidoo.de/shopping/{lang}/additional-items/ownership/edit"
+      },
+      "pantry:edit-ingredients-ownership": {
+        "href": "https://cookidoo.de/shopping/{lang}/owned-ingredients/ownership/edit"
+      },
+      "pantry:home": {
+        "href": "https://cookidoo.de/shopping/{lang}{?excludeComponent}"
+      },
+      "pantry:recipe-ingredients": {
+        "href": "https://cookidoo.de/shopping/{lang}/recipes/add"
+      },
+      "pantry:remove-additional-items": {
+        "href": "https://cookidoo.de/shopping/{lang}/additional-items/remove"
+      },
+      "pantry:remove-recipe": {
+        "href": "https://cookidoo.de/shopping/{lang}/recipes/remove"
+      }
+    }
+  },
+  "planning": {
+    "_links": {
+      "planning:api-my-day": {
+        "href": "https://cookidoo.de/planning/{lang}/api/my-day"
+      },
+      "planning:api-my-day-recipes": {
+        "href": "https://cookidoo.de/planning/{lang}/api/my-day/{dayKey}/recipes/{recipeId}"
+      },
+      "planning:api-my-week-from-date": {
+        "href": "https://cookidoo.de/planning/{lang}/api/my-week/{dayKey}"
+      }
+    }
+  },
+  "recipes/recipe": {
+    "_links": {
+      "recipe:details": {
+        "href": "https://cookidoo.de/recipes/recipe{/lang}/{id}"
+      }
+    }
+  },
+  "search": {
+    "_links": {
+      "search:home": {
+        "href": "https://cookidoo.de/search/{lang}{?query,context,filters*,focus,pagination,limit}"
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "active": true,
+    "startDate": "2024-12-16T00:00:00Z",
+    "expires": "2025-12-16T23:59:00Z",
+    "type": "REGULAR",
+    "extendedType": "REGULAR",
+    "autoRenewalProduct": "Cookidoo 12 Months",
+    "autoRenewalProductCode": null,
+    "countryOfResidence": "fr",
+    "subscriptionLevel": "FULL",
+    "status": "ACTIVE",
+    "marketMismatch": false,
+    "subscriptionSource": "COMMERCE",
+    "_created": "2024-12-16T10:00:00.000000000Z",
+    "_modified": null
+  }
+]

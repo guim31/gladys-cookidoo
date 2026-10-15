@@ -1,0 +1,37 @@
+{
+  "recipeId": "01K2CVHD1DXG1PVETNVV3JPKWW",
+  "authorId": "11111111-2222-4333-8444-555555555555",
+  "modifiedAt": "2025-08-11T17:03:20.415Z",
+  "createdAt": "2025-08-11T15:21:15.566Z",
+  "status": "ACTIVE",
+  "workStatus": "PUBLIC",
+  "recipeContent": {
+    "name": "Vongole alla marinara",
+    "image": "https://assets.tmecosys.com/image/upload/{transformation}/img/recipe/ras/Assets/29F42E5A-098A-46BC-87C5-59CF7C81E44D/Derivates/43ADC698-B45F-41E2-A479-FA5BC32702C6",
+    "isBasedOn": "https://cookidoo.ch/recipes/recipe/en/r166987",
+    "totalTime": "PT30M",
+    "prepTime": "PT10M",
+    "tool": ["TM7", "TM6", "TM5"],
+    "recipeYield": {
+      "value": 6,
+      "unitText": "portion"
+    },
+    "recipeIngredient": [
+      "130 g di cipolla",
+      "1 ¼ - 2 ¼ spicchi di aglio",
+      "65 g di olio extravergine di oliva",
+      "1500 g di vongole fresche, pulite",
+      "1 pizzico di pepe macinato",
+      "65 g di vino bianco",
+      "190 g di brodo di pesce",
+      "2 ½ cucchiaini di prezzemolo fresco, tritato, sole le foglioline",
+      "1 ¼ cucchiaino di pangrattato",
+      "⅔ cucchiaino di sale"
+    ],
+    "recipeInstructions": [
+      "Mettere nel boccale le cipolle, gli spicchi di aglio e l’olio extravergine di oliva, tritare: 4 sec./vel. 5. Insaporire: 10 min./120°C/vel. 1. Nel frattempo, mettere le vongole nel Varoma e risciacquarle in acqua calda. Tenere da parte.",
+      "Aggiungere nel boccale il pepe, il vino bianco e il brodo. Posizionare il Varoma e cuocere a vapore: 14 min./Varoma/vel. 2.",
+      "Togliere il Varoma. Aggiungere i prezzemolo, il pangrattato e il sale, mescolare: 15 sec./vel. 2. Trasferire le vongole in un piatto da portata, versare sopra la salsa e spolverizzare con il prezzemolo. Servire subito."
+    ]
+  }
+}

@@ -11,17 +11,22 @@ Gladys through
 [`@gladysassistant/integration-sdk`](https://github.com/GladysAssistant/integration-sdk-js),
 its only runtime dependency. It started from the official JavaScript template.
 
+This one brings a **Cookidoo** account (Vorwerk's recipe service for the
+Thermomix) into Gladys: shopping list, week plan, subscription, as one device,
+two dashboard widgets and four scene actions. Cloud only, no Thermomix control.
+
 ## Commands
 
 ```bash
 npm install
 npm test                                  # node --test, the built-in runner
-node --test test/devices.test.js          # one file
-node --test --test-name-pattern "plug"    # tests whose name matches
+node --test test/app.test.js              # one file
+node --test --test-name-pattern "timer"   # tests whose name matches
 npm run lint                              # ESLint
 npm run format:check                      # Prettier, as the CI runs it
 npm run format                            # Prettier, fix in place
 npx github:GladysAssistant/integration-store .   # store admission checks
+node scripts/probe.mjs fr                 # the real Cookidoo, a made-up account, read-only
 ```
 
 The CI (`.github/workflows/ci.yml`) runs `format:check`, `lint` and `test` on
@@ -31,16 +36,31 @@ pushing.
 ## Architecture
 
 ```
-index.js                          SDK wiring only: handlers registered before connect()
-src/devices/index.js              registry of the device blueprints + dispatch helpers
-src/devices/<type>.js             one device type per file (buildDevice, onPoll, onSetValue...)
-src/scenes.js                     scene action handlers (manifest `scene_actions`)
-src/widgets.js                    dashboard widget handlers (manifest `widgets`)
-src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
-src/weather.js                    example driver (Open-Meteo)
-gladys-assistant-integration.json manifest: name, config_schema, actions, image...
-docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
-test/                             node --test, against the SDK's fake Gladys (integration-sdk/testing)
+index.js                          SDK wiring only: registerHandlers(), then connect()
+src/app.js                        the integration on a Gladys client: refresh timer, states,
+                                  scene actions, widgets, status, logs (tested on the fake Gladys)
+src/account.js                    one Cookidoo account: snapshot, refresh, list operations,
+                                  failure policy (auth pause, 30 min anti-robot pause)
+src/cookidoo/auth.js              OAuth2 code + PKCE sign-in against Vorwerk CIAM, refresh
+src/cookidoo/http.js              fetch with a cookie jar and redirects followed by hand
+src/cookidoo/client.js            tokens, .well-known endpoint discovery, the API calls
+src/cookidoo/parse.js             Cookidoo JSON -> the integration's model
+src/cookidoo/errors.js            failure kinds: auth, blocked, network, api
+src/cookidoo/markets.json         country -> host + languages (from cookidoo-api, MIT)
+src/device.js                     the device, its features (keys forever) and states
+src/widgets.js                    widget contents (pure builders) and action keys
+src/scenes.js                     scene action keys
+src/images.js                     recipe pictures of the widget (onWidgetGetImage)
+src/match.js                      finding an item by the name a scene gives
+src/i18n.js                       every user-facing text, en/fr/de/es
+src/store.js                      /data/cookidoo.json: tokens + profile id, bound to the account
+src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults), markets
+src/issues.js                     repeated failures logged once
+scripts/probe.mjs                 the real service, read-only, nothing sensitive printed
+gladys-assistant-integration.json manifest: name, config_schema, actions, widgets...
+docs/{en,fr,de,es}.md             user documentation, re-hosted by Gladys, same sections
+test/                             node --test, the SDK's fake Gladys + test/helpers/fakeCookidoo.js
+test/fixtures/cookidoo/           recorded Cookidoo answers (cookidoo-api, MIT), see its README
 .github/scripts/release.mjs       release helpers (manifest bump, changelog), tested in test/
 ```
 
@@ -56,7 +76,7 @@ test/                             node --test, against the SDK's fake Gladys (in
   writable volume. Never log tokens, passwords or API keys.
 - **Versions belong to the Release workflow** (Actions → Release). Never edit
   `version` in `package.json` or in the manifest, nor the `docker_image` tag,
-  by hand — except on the README's hand-pushed tag path, which bumps all three
+  by hand — except when pushing a release tag by hand, which bumps all three
   together before tagging. `test/manifest.test.js` checks they agree.
 - **Changelog.** Every user-visible change adds a line under `## [Unreleased]`
   in `CHANGELOG.md` (`### Added`, `Changed`, `Fixed`, `Removed`, `Security`).
@@ -70,8 +90,10 @@ test/                             node --test, against the SDK's fake Gladys (in
   `type: "provider"`: 5.1.0). `test/manifest.test.js` ties the manifest to the
   code (defaults, action, scene and widget handlers): change both sides
   together.
-- **User-facing text** is bilingual (English and French): action messages,
-  manifest texts, and `docs/en.md` / `docs/fr.md`, kept in sync.
+- **User-facing text** exists in four languages (English, French, German with
+  "du", Spanish with "usted"): action messages, widget texts, feature names,
+  manifest texts, and `docs/{en,fr,de,es}.md` with the same sections.
+  `test/i18n.test.js` checks it.
 - **Style.** Prettier formats, ESLint catches mistakes. Comments explain why,
   in English. Tests never touch the network.
 
@@ -169,6 +191,10 @@ code de ce dépôt. Compléter ce fichier quand un nouveau piège est découvert
   avec identifiants. Un test vérifie qu'un cycle normal n'écrit rien en info.
 - **Heartbeat** : republier au moins toutes les 12 h une valeur qui ne change pas, sinon le front
   affiche « Pas de valeur récente » au-delà de 48 h.
+- Le `heartbeat` de `publishChangedStates` se mesure sur `Date.now()` du SDK, pas sur une horloge
+  injectée : pour le tester, simuler `Date` (`t.mock.timers.enable({ apis: ['Date'] })`).
+- Un minuteur interne testé avec `t.mock.timers` : après `tick()`, attendre que le cycle asynchrone
+  ait fini (le minuteur réarmé), pas un nombre fixe de tours de boucle (relevé sur gladys-cookidoo).
 
 **Widgets, déclencheurs, actions de scène (SDK ≥ 0.14, Gladys ≥ 5.1)**
 
@@ -197,6 +223,15 @@ code de ce dépôt. Compléter ce fichier quand un nouveau piège est découvert
 - Les filtres de scène ne font qu'égalité et appartenance : un seuil reste le travail d'un capteur.
 - **Les clés de widgets, de déclencheurs et d'actions sont figées une fois publiées.**
 - `gladys_version` `>=5.1.0` dès qu'il y a widgets, déclencheurs ou actions de scène.
+- Dans les `fields` d'un bouton de widget, le `label` d'une **option** de `select` est un objet
+  multilingue comme les autres (`{ en: … }` suffit pour une donnée non traduite, un nom d'article) :
+  une chaîne simple fait jeter le bouton. `validateWidgetContent` le signale (relevé sur
+  gladys-cookidoo).
+
+**Langues**
+
+- Le garde-fou du « Sie » de politesse se déclenche aussi sur le pronom « sie » en tête de phrase
+  (« Die Integration … Sie wartet ») : tourner la phrase autrement plutôt qu'affaiblir le test.
 
 ## Store
 
@@ -233,3 +268,57 @@ long, et sur un « Sie »/« Ihr… » de politesse en allemand. Le store exige 
 - Docs `en`, `fr`, `de`, `es` avec les mêmes sections.
 - Chauffe, ouverture, sécurité : ne rien rendre pilotable « comme un thermostat » ou par un assistant
   vocal quand une erreur serait dangereuse (leçon d'OctoPrint).
+
+## Cookidoo (propre à cette intégration)
+
+**API** (non officielle, reprise de `miaucl/cookidoo-api`, MIT ; l'intégration Home Assistant
+l'utilise)
+
+- **Connexion** : OAuth2 code + PKCE sur le CIAM de Vorwerk (`ciam.prod.cookidoo.vorwerk-digital.com`),
+  client public `mobile-android`, redirection `com.vorwerk.cookidoo://code-grant`, paramètre
+  `market` = code pays. Étapes : `.well-known/openid-configuration` → `authorize` (suit des
+  redirections, pose des cookies) → formulaire HTML dont on lit le champ caché `requestId` → POST
+  `login-srv/login` (form : `requestId`, `username`, `password`) → redirections jusqu'au schéma de
+  l'appli qui porte `code` et `state` → `token`. Jeton d'accès 12 h, jeton de rafraîchissement
+  **rotatif** (un seul rafraîchissement à la fois, sinon le second est refusé).
+- Node `fetch` ne garde aucun cookie : `src/cookidoo/http.js` suit les redirections à la main avec
+  un petit bocal à cookies, et ne suit que des hôtes Vorwerk en HTTPS.
+- **Pas de contournement** : cookidoo-api envoie un User-Agent de navigateur (Cloudflare refuse
+  parfois les robots, issue miaucl/cookidoo-api#230). Ici, l'intégration s'annonce sous son propre
+  nom ; un 403 ou une page de défi devient l'erreur `blocked` : pause de 30 minutes, message clair.
+  À confirmer avec `scripts/probe.mjs` depuis une machine qui a le réseau.
+- **Points d'accès** : lus dans `https://<hôte du pays>/<service>/.well-known/home` (HAL, une fois
+  par processus) pour chaque `rel` utilisé (`pantry:home`, `planning:api-my-week-from-date`…), sans
+  chemin codé en dur. Un `rel` disparu est une erreur `api`, jamais une supposition.
+- **Hôte par pays** : un seul par pays (`src/cookidoo/markets.json`), `cookidoo.international` pour
+  les pays sans site, `cookidoo.co.uk` pour l'Irlande, `cookidoo.be` pour le Luxembourg et les
+  Pays-Bas. La langue du contenu (`fr-FR`, `de-CH`…) est un choix parmi celles du pays.
+- **Liste de courses** (`pantry:home`, un seul GET) : `recipes`, `customerRecipes` (ingrédients en
+  texte libre), `additionalItems`. « Coché » = `isOwned`. On ne retire **pas** un ingrédient seul :
+  seulement sa recette (`pantry:remove-recipe`). `ownedTimestamp` en secondes, comme cookidoo-api.
+- **Planning** (`my-week/{jour}`) : la semaine qui contient le jour ; `totalTime` en secondes sous
+  forme de texte (`"1500.0"`) ; les recettes perso n'arrivent souvent que par `customerRecipeIds`
+  (lues une par une, mises en cache, une recette supprimée est ignorée).
+- **Abonnement** (`ownership:subscriptions`) : tableau, on prend l'entrée `active` ; `type`
+  `REGULAR` / `TRIAL` / `NONE` ; `expires` à 23:59 UTC, affiché en date UTC.
+- **Identité de l'appareil** : l'`id` du profil communautaire
+  (`community-profile:user-private-profile`), l'identifiant que Home Assistant utilise (il a migré
+  vers lui depuis le `sub` du jeton).
+
+**Choix de conception**
+
+- Un appareil par compte, `should_poll: false`, minuteur interne (5 min par défaut, 2 à 30), qui ne
+  lit Cookidoo que si l'appareil est ajouté ou qu'un widget a été affiché dans l'heure. Abonnement
+  toutes les 6 h. Une opération relit la liste juste avant d'agir.
+- Mot de passe refusé : plus de connexion automatique jusqu'à un changement de configuration ou
+  « Tester la connexion » (risque de blocage du compte).
+- Aucun déclencheur de scène : compteurs et recette du jour sont des états.
+- Ajouter un article déjà à acheter ne le double pas ; un article libre coché du même nom est
+  décoché. Cocher par nom : nom exact d'abord, sinon une seule correspondance partielle, sinon rien.
+- « Vider les cochés » : articles libres cochés + recettes dont tous les ingrédients sont cochés.
+
+**Vérifier**
+
+- `node scripts/probe.mjs <pays>` (faux compte jusqu'au refus) ; avec `COOKIDOO_EMAIL` et
+  `COOKIDOO_PASSWORD`, lecture seule d'un vrai compte (des nombres seulement). Node ignore
+  `HTTPS_PROXY` : `NODE_USE_ENV_PROXY=1` sous Node 24 derrière un proxy.

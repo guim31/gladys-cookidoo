@@ -1,0 +1,18 @@
+[
+  {
+    "active": true,
+    "startDate": "2024-09-15T00:00:00Z",
+    "expires": "2024-10-15T23:59:00Z",
+    "type": "TRIAL",
+    "extendedType": "TRIAL",
+    "autoRenewalProduct": "Cookidoo 1 Month Free",
+    "autoRenewalProductCode": null,
+    "countryOfResidence": "ch",
+    "subscriptionLevel": "NONE",
+    "status": "RUNNING",
+    "marketMismatch": false,
+    "subscriptionSource": "COMMERCE",
+    "_created": "2024-10-30T15:38:26.496029003Z",
+    "_modified": null
+  }
+]

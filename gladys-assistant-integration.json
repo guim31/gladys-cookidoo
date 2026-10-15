@@ -1,177 +1,1263 @@
 {
   "manifest_version": 1,
   "type": "device",
-  "name": "Demo Devices Template",
+  "name": "Cookidoo",
   "description": {
-    "en": "Starter template showing sensors, a switch, a dimmable light and a smart plug.",
-    "fr": "Template de démarrage : capteurs, interrupteur, lampe variable et prise connectée."
+    "en": "Your Cookidoo shopping list and week plan (Thermomix) in Gladys: sensors, widgets and scenes.",
+    "fr": "La liste de courses et le planning Cookidoo (Thermomix) dans Gladys : capteurs, widgets, scènes.",
+    "de": "Deine Cookidoo-Einkaufsliste und dein Wochenplan (Thermomix) in Gladys: Sensoren, Widgets, Szenen.",
+    "es": "Su lista de la compra y plan semanal de Cookidoo (Thermomix) en Gladys: sensores, widgets, escenas."
   },
   "version": "1.0.0",
-  "docker_image": "ghcr.io/gladysassistant/integration-template-js:1.0.0",
-  "gladys_version": ">=5.1.0",
-  "cover_image": "https://raw.githubusercontent.com/GladysAssistant/integration-template-js/master/cover.png",
-  "categories": ["lighting", "security", "environment"],
-  "transports": ["local", "cloud"],
+  "docker_image": "ghcr.io/guim31/gladys-cookidoo:1.0.0",
+  "gladys_version": ">=5.2.0",
+  "cover_image": "https://raw.githubusercontent.com/guim31/gladys-cookidoo/main/cover.png",
+  "categories": ["services", "appliances"],
+  "transports": ["cloud"],
   "config_schema": [
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Getting started", "fr": "Pour commencer" },
+      "label": {
+        "en": "Cookidoo account",
+        "fr": "Compte Cookidoo",
+        "de": "Cookidoo-Konto",
+        "es": "Cuenta Cookidoo"
+      },
       "description": {
-        "en": "The demo weather station reads real data from the free Open-Meteo API: pick the coordinates to observe. No account, no API key.",
-        "fr": "La station météo de démonstration lit de vraies données via l'API gratuite Open-Meteo : choisissez les coordonnées à observer. Pas de compte, pas de clé d'API."
+        "en": "The account you use in the Cookidoo app or on the Thermomix. The password stays in Gladys; the sign-in tokens are kept in the integration's data. Not affiliated with Vorwerk.",
+        "fr": "Le compte que vous utilisez dans l'appli Cookidoo ou sur le Thermomix. Le mot de passe reste dans Gladys ; les jetons de connexion sont gardés dans les données de l'intégration. Sans lien avec Vorwerk.",
+        "de": "Das Konto, das du in der Cookidoo-App oder am Thermomix nutzt. Das Passwort bleibt in Gladys, die Anmelde-Tokens in den Daten der Integration. Nicht mit Vorwerk verbunden.",
+        "es": "La cuenta que utiliza en la app Cookidoo o en la Thermomix. La contraseña se queda en Gladys; los tokens de acceso se guardan en los datos de la integración. Sin relación con Vorwerk."
       },
       "links": [
         {
-          "url": "https://open-meteo.com/en/docs",
-          "label": { "en": "Open-Meteo documentation", "fr": "Documentation Open-Meteo" }
+          "url": "https://cookidoo.fr",
+          "label": {
+            "en": "Cookidoo website",
+            "fr": "Site Cookidoo",
+            "de": "Cookidoo-Website",
+            "es": "Web de Cookidoo"
+          }
         }
       ]
     },
     {
-      "key": "latitude",
-      "type": "number",
-      "label": { "en": "Latitude", "fr": "Latitude" },
-      "description": {
-        "en": "Latitude used for the demo weather sensor.",
-        "fr": "Latitude utilisée par le capteur météo de démonstration."
+      "key": "email",
+      "type": "string",
+      "label": {
+        "en": "E-mail",
+        "fr": "E-mail",
+        "de": "E-Mail",
+        "es": "Correo electrónico"
       },
-      "placeholder": { "en": "e.g. 48.8566", "fr": "ex. 48.8566" },
-      "required": true,
-      "default": 48.8566,
-      "min": -90,
-      "max": 90
+      "description": {
+        "en": "E-mail address of the Cookidoo account.",
+        "fr": "Adresse e-mail du compte Cookidoo.",
+        "de": "E-Mail-Adresse des Cookidoo-Kontos.",
+        "es": "Dirección de correo de la cuenta Cookidoo."
+      },
+      "placeholder": {
+        "en": "e.g. name@example.com",
+        "fr": "ex. nom@example.com",
+        "de": "z. B. name@example.com",
+        "es": "p. ej. nombre@example.com"
+      },
+      "required": true
     },
     {
-      "key": "longitude",
-      "type": "number",
-      "label": { "en": "Longitude", "fr": "Longitude" },
-      "description": {
-        "en": "Longitude used for the demo weather sensor.",
-        "fr": "Longitude utilisée par le capteur météo de démonstration."
+      "key": "password",
+      "type": "secret",
+      "label": {
+        "en": "Password",
+        "fr": "Mot de passe",
+        "de": "Passwort",
+        "es": "Contraseña"
       },
-      "placeholder": { "en": "e.g. 2.3522", "fr": "ex. 2.3522" },
-      "required": true,
-      "default": 2.3522,
-      "min": -180,
-      "max": 180
+      "required": true
     },
     {
-      "key": "unit",
+      "key": "country",
       "type": "select",
-      "label": { "en": "Temperature unit", "fr": "Unité de température" },
-      "required": false,
-      "default": "celsius",
+      "label": {
+        "en": "Country of the account",
+        "fr": "Pays du compte",
+        "de": "Land des Kontos",
+        "es": "País de la cuenta"
+      },
+      "description": {
+        "en": "The country chosen when the account was created: it sets the Cookidoo site (cookidoo.fr, cookidoo.de...).",
+        "fr": "Le pays choisi à la création du compte : il fixe le site Cookidoo (cookidoo.fr, cookidoo.de...).",
+        "de": "Das bei der Erstellung des Kontos gewählte Land: Es bestimmt die Cookidoo-Website (cookidoo.fr, cookidoo.de...).",
+        "es": "El país elegido al crear la cuenta: determina el sitio de Cookidoo (cookidoo.fr, cookidoo.de...)."
+      },
+      "required": true,
+      "default": "fr",
       "options": [
-        { "value": "celsius", "label": { "en": "Celsius", "fr": "Celsius" } },
-        { "value": "fahrenheit", "label": { "en": "Fahrenheit", "fr": "Fahrenheit" } }
+        {
+          "value": "ar",
+          "label": {
+            "en": "Argentina",
+            "fr": "Argentine",
+            "de": "Argentinien",
+            "es": "Argentina"
+          }
+        },
+        {
+          "value": "au",
+          "label": {
+            "en": "Australia",
+            "fr": "Australie",
+            "de": "Australien",
+            "es": "Australia"
+          }
+        },
+        {
+          "value": "at",
+          "label": {
+            "en": "Austria",
+            "fr": "Autriche",
+            "de": "Österreich",
+            "es": "Austria"
+          }
+        },
+        {
+          "value": "be",
+          "label": {
+            "en": "Belgium",
+            "fr": "Belgique",
+            "de": "Belgien",
+            "es": "Bélgica"
+          }
+        },
+        {
+          "value": "br",
+          "label": {
+            "en": "Brazil",
+            "fr": "Brésil",
+            "de": "Brasilien",
+            "es": "Brasil"
+          }
+        },
+        {
+          "value": "bn",
+          "label": {
+            "en": "Brunei",
+            "fr": "Brunei",
+            "de": "Brunei Darussalam",
+            "es": "Brunéi"
+          }
+        },
+        {
+          "value": "ca",
+          "label": {
+            "en": "Canada",
+            "fr": "Canada",
+            "de": "Kanada",
+            "es": "Canadá"
+          }
+        },
+        {
+          "value": "cl",
+          "label": {
+            "en": "Chile",
+            "fr": "Chili",
+            "de": "Chile",
+            "es": "Chile"
+          }
+        },
+        {
+          "value": "co",
+          "label": {
+            "en": "Colombia",
+            "fr": "Colombie",
+            "de": "Kolumbien",
+            "es": "Colombia"
+          }
+        },
+        {
+          "value": "cy",
+          "label": {
+            "en": "Cyprus",
+            "fr": "Chypre",
+            "de": "Zypern",
+            "es": "Chipre"
+          }
+        },
+        {
+          "value": "cz",
+          "label": {
+            "en": "Czechia",
+            "fr": "Tchéquie",
+            "de": "Tschechien",
+            "es": "Chequia"
+          }
+        },
+        {
+          "value": "dk",
+          "label": {
+            "en": "Denmark",
+            "fr": "Danemark",
+            "de": "Dänemark",
+            "es": "Dinamarca"
+          }
+        },
+        {
+          "value": "ee",
+          "label": {
+            "en": "Estonia",
+            "fr": "Estonie",
+            "de": "Estland",
+            "es": "Estonia"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "France",
+            "fr": "France",
+            "de": "Frankreich",
+            "es": "Francia"
+          }
+        },
+        {
+          "value": "de",
+          "label": {
+            "en": "Germany",
+            "fr": "Allemagne",
+            "de": "Deutschland",
+            "es": "Alemania"
+          }
+        },
+        {
+          "value": "gr",
+          "label": {
+            "en": "Greece",
+            "fr": "Grèce",
+            "de": "Griechenland",
+            "es": "Grecia"
+          }
+        },
+        {
+          "value": "gt",
+          "label": {
+            "en": "Guatemala",
+            "fr": "Guatemala",
+            "de": "Guatemala",
+            "es": "Guatemala"
+          }
+        },
+        {
+          "value": "hu",
+          "label": {
+            "en": "Hungary",
+            "fr": "Hongrie",
+            "de": "Ungarn",
+            "es": "Hungría"
+          }
+        },
+        {
+          "value": "is",
+          "label": {
+            "en": "Iceland",
+            "fr": "Islande",
+            "de": "Island",
+            "es": "Islandia"
+          }
+        },
+        {
+          "value": "id",
+          "label": {
+            "en": "Indonesia",
+            "fr": "Indonésie",
+            "de": "Indonesien",
+            "es": "Indonesia"
+          }
+        },
+        {
+          "value": "ie",
+          "label": {
+            "en": "Ireland",
+            "fr": "Irlande",
+            "de": "Irland",
+            "es": "Irlanda"
+          }
+        },
+        {
+          "value": "il",
+          "label": {
+            "en": "Israel",
+            "fr": "Israël",
+            "de": "Israel",
+            "es": "Israel"
+          }
+        },
+        {
+          "value": "it",
+          "label": {
+            "en": "Italy",
+            "fr": "Italie",
+            "de": "Italien",
+            "es": "Italia"
+          }
+        },
+        {
+          "value": "kw",
+          "label": {
+            "en": "Kuwait",
+            "fr": "Koweït",
+            "de": "Kuwait",
+            "es": "Kuwait"
+          }
+        },
+        {
+          "value": "lt",
+          "label": {
+            "en": "Lithuania",
+            "fr": "Lituanie",
+            "de": "Litauen",
+            "es": "Lituania"
+          }
+        },
+        {
+          "value": "lu",
+          "label": {
+            "en": "Luxembourg",
+            "fr": "Luxembourg",
+            "de": "Luxemburg",
+            "es": "Luxemburgo"
+          }
+        },
+        {
+          "value": "my",
+          "label": {
+            "en": "Malaysia",
+            "fr": "Malaisie",
+            "de": "Malaysia",
+            "es": "Malasia"
+          }
+        },
+        {
+          "value": "mt",
+          "label": {
+            "en": "Malta",
+            "fr": "Malte",
+            "de": "Malta",
+            "es": "Malta"
+          }
+        },
+        {
+          "value": "mx",
+          "label": {
+            "en": "Mexico",
+            "fr": "Mexique",
+            "de": "Mexiko",
+            "es": "México"
+          }
+        },
+        {
+          "value": "ma",
+          "label": {
+            "en": "Morocco",
+            "fr": "Maroc",
+            "de": "Marokko",
+            "es": "Marruecos"
+          }
+        },
+        {
+          "value": "nl",
+          "label": {
+            "en": "Netherlands",
+            "fr": "Pays-Bas",
+            "de": "Niederlande",
+            "es": "Países Bajos"
+          }
+        },
+        {
+          "value": "nz",
+          "label": {
+            "en": "New Zealand",
+            "fr": "Nouvelle-Zélande",
+            "de": "Neuseeland",
+            "es": "Nueva Zelanda"
+          }
+        },
+        {
+          "value": "no",
+          "label": {
+            "en": "Norway",
+            "fr": "Norvège",
+            "de": "Norwegen",
+            "es": "Noruega"
+          }
+        },
+        {
+          "value": "pa",
+          "label": {
+            "en": "Panama",
+            "fr": "Panama",
+            "de": "Panama",
+            "es": "Panamá"
+          }
+        },
+        {
+          "value": "py",
+          "label": {
+            "en": "Paraguay",
+            "fr": "Paraguay",
+            "de": "Paraguay",
+            "es": "Paraguay"
+          }
+        },
+        {
+          "value": "pe",
+          "label": {
+            "en": "Peru",
+            "fr": "Pérou",
+            "de": "Peru",
+            "es": "Perú"
+          }
+        },
+        {
+          "value": "ph",
+          "label": {
+            "en": "Philippines",
+            "fr": "Philippines",
+            "de": "Philippinen",
+            "es": "Filipinas"
+          }
+        },
+        {
+          "value": "pl",
+          "label": {
+            "en": "Poland",
+            "fr": "Pologne",
+            "de": "Polen",
+            "es": "Polonia"
+          }
+        },
+        {
+          "value": "pt",
+          "label": {
+            "en": "Portugal",
+            "fr": "Portugal",
+            "de": "Portugal",
+            "es": "Portugal"
+          }
+        },
+        {
+          "value": "ro",
+          "label": {
+            "en": "Romania",
+            "fr": "Roumanie",
+            "de": "Rumänien",
+            "es": "Rumanía"
+          }
+        },
+        {
+          "value": "sa",
+          "label": {
+            "en": "Saudi Arabia",
+            "fr": "Arabie saoudite",
+            "de": "Saudi-Arabien",
+            "es": "Arabia Saudí"
+          }
+        },
+        {
+          "value": "sg",
+          "label": {
+            "en": "Singapore",
+            "fr": "Singapour",
+            "de": "Singapur",
+            "es": "Singapur"
+          }
+        },
+        {
+          "value": "za",
+          "label": {
+            "en": "South Africa",
+            "fr": "Afrique du Sud",
+            "de": "Südafrika",
+            "es": "Sudáfrica"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Spain",
+            "fr": "Espagne",
+            "de": "Spanien",
+            "es": "España"
+          }
+        },
+        {
+          "value": "se",
+          "label": {
+            "en": "Sweden",
+            "fr": "Suède",
+            "de": "Schweden",
+            "es": "Suecia"
+          }
+        },
+        {
+          "value": "ch",
+          "label": {
+            "en": "Switzerland",
+            "fr": "Suisse",
+            "de": "Schweiz",
+            "es": "Suiza"
+          }
+        },
+        {
+          "value": "th",
+          "label": {
+            "en": "Thailand",
+            "fr": "Thaïlande",
+            "de": "Thailand",
+            "es": "Tailandia"
+          }
+        },
+        {
+          "value": "tr",
+          "label": {
+            "en": "Türkiye",
+            "fr": "Turquie",
+            "de": "Türkei",
+            "es": "Turquía"
+          }
+        },
+        {
+          "value": "ua",
+          "label": {
+            "en": "Ukraine",
+            "fr": "Ukraine",
+            "de": "Ukraine",
+            "es": "Ucrania"
+          }
+        },
+        {
+          "value": "ae",
+          "label": {
+            "en": "United Arab Emirates",
+            "fr": "Émirats arabes unis",
+            "de": "Vereinigte Arabische Emirate",
+            "es": "Emiratos Árabes Unidos"
+          }
+        },
+        {
+          "value": "gb",
+          "label": {
+            "en": "United Kingdom",
+            "fr": "Royaume-Uni",
+            "de": "Vereinigtes Königreich",
+            "es": "Reino Unido"
+          }
+        },
+        {
+          "value": "us",
+          "label": {
+            "en": "United States",
+            "fr": "États-Unis",
+            "de": "Vereinigte Staaten",
+            "es": "Estados Unidos"
+          }
+        },
+        {
+          "value": "uy",
+          "label": {
+            "en": "Uruguay",
+            "fr": "Uruguay",
+            "de": "Uruguay",
+            "es": "Uruguay"
+          }
+        },
+        {
+          "value": "vn",
+          "label": {
+            "en": "Vietnam",
+            "fr": "Viêt Nam",
+            "de": "Vietnam",
+            "es": "Vietnam"
+          }
+        }
       ]
     },
     {
-      "key": "poll_frequency",
-      "type": "number",
-      "label": { "en": "Refresh interval (s)", "fr": "Intervalle de rafraîchissement (s)" },
+      "key": "cookidoo_language",
+      "type": "select",
+      "label": {
+        "en": "Cookidoo language",
+        "fr": "Langue de Cookidoo",
+        "de": "Cookidoo-Sprache",
+        "es": "Idioma de Cookidoo"
+      },
       "description": {
-        "en": "How often sensors are polled, in seconds (one minute minimum).",
-        "fr": "Fréquence d'interrogation des capteurs, en secondes (une minute minimum)."
+        "en": "Language of the recipes and items. Automatic: the one of the country closest to the language below.",
+        "fr": "Langue des recettes et des articles. Automatique : celle du pays la plus proche de la langue ci-dessous.",
+        "de": "Sprache der Rezepte und Artikel. Automatisch: die des Landes, die der Sprache unten am nächsten ist.",
+        "es": "Idioma de las recetas y artículos. Automático: el del país más cercano al idioma de abajo."
       },
       "required": false,
-      "default": 300,
-      "min": 60,
-      "max": 3600
+      "default": "auto",
+      "options": [
+        {
+          "value": "auto",
+          "label": {
+            "en": "Automatic",
+            "fr": "Automatique",
+            "de": "Automatisch",
+            "es": "Automático"
+          }
+        },
+        {
+          "value": "cs",
+          "label": {
+            "en": "Czech (cs)",
+            "fr": "Tchèque (cs)",
+            "de": "Tschechisch (cs)",
+            "es": "Checo (cs)"
+          }
+        },
+        {
+          "value": "de-AT",
+          "label": {
+            "en": "Austrian German (de-AT)",
+            "fr": "Allemand autrichien (de-AT)",
+            "de": "Österreichisches Deutsch (de-AT)",
+            "es": "Alemán austríaco (de-AT)"
+          }
+        },
+        {
+          "value": "de-BE",
+          "label": {
+            "en": "German (Belgium) (de-BE)",
+            "fr": "Allemand (Belgique) (de-BE)",
+            "de": "Deutsch (Belgien) (de-BE)",
+            "es": "Alemán (Bélgica) (de-BE)"
+          }
+        },
+        {
+          "value": "de-CH",
+          "label": {
+            "en": "Swiss High German (de-CH)",
+            "fr": "Allemand suisse (de-CH)",
+            "de": "Schweizer Hochdeutsch (de-CH)",
+            "es": "Alto alemán suizo (de-CH)"
+          }
+        },
+        {
+          "value": "de-DE",
+          "label": {
+            "en": "German (Germany) (de-DE)",
+            "fr": "Allemand (Allemagne) (de-DE)",
+            "de": "Deutsch (Deutschland) (de-DE)",
+            "es": "Alemán (Alemania) (de-DE)"
+          }
+        },
+        {
+          "value": "el",
+          "label": {
+            "en": "Greek (el)",
+            "fr": "Grec (el)",
+            "de": "Griechisch (el)",
+            "es": "Griego (el)"
+          }
+        },
+        {
+          "value": "en",
+          "label": {
+            "en": "English (en)",
+            "fr": "Anglais (en)",
+            "de": "Englisch (en)",
+            "es": "Inglés (en)"
+          }
+        },
+        {
+          "value": "en-AU",
+          "label": {
+            "en": "Australian English (en-AU)",
+            "fr": "Anglais australien (en-AU)",
+            "de": "Englisch (Australien) (en-AU)",
+            "es": "Inglés australiano (en-AU)"
+          }
+        },
+        {
+          "value": "en-CA",
+          "label": {
+            "en": "Canadian English (en-CA)",
+            "fr": "Anglais canadien (en-CA)",
+            "de": "Englisch (Kanada) (en-CA)",
+            "es": "Inglés canadiense (en-CA)"
+          }
+        },
+        {
+          "value": "en-GB",
+          "label": {
+            "en": "British English (en-GB)",
+            "fr": "Anglais britannique (en-GB)",
+            "de": "Englisch (Vereinigtes Königreich) (en-GB)",
+            "es": "Inglés británico (en-GB)"
+          }
+        },
+        {
+          "value": "en-US",
+          "label": {
+            "en": "American English (en-US)",
+            "fr": "Anglais américain (en-US)",
+            "de": "Englisch (Vereinigte Staaten) (en-US)",
+            "es": "Inglés estadounidense (en-US)"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Spanish (es)",
+            "fr": "Espagnol (es)",
+            "de": "Spanisch (es)",
+            "es": "Español (es)"
+          }
+        },
+        {
+          "value": "es-ES",
+          "label": {
+            "en": "European Spanish (es-ES)",
+            "fr": "Espagnol d’Espagne (es-ES)",
+            "de": "Spanisch (Spanien) (es-ES)",
+            "es": "Español de España (es-ES)"
+          }
+        },
+        {
+          "value": "es-MX",
+          "label": {
+            "en": "Mexican Spanish (es-MX)",
+            "fr": "Espagnol du Mexique (es-MX)",
+            "de": "Spanisch (Mexiko) (es-MX)",
+            "es": "Español de México (es-MX)"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "French (fr)",
+            "fr": "Français (fr)",
+            "de": "Französisch (fr)",
+            "es": "Francés (fr)"
+          }
+        },
+        {
+          "value": "fr-BE",
+          "label": {
+            "en": "French (Belgium) (fr-BE)",
+            "fr": "Français (Belgique) (fr-BE)",
+            "de": "Französisch (Belgien) (fr-BE)",
+            "es": "Francés (Bélgica) (fr-BE)"
+          }
+        },
+        {
+          "value": "fr-CA",
+          "label": {
+            "en": "Canadian French (fr-CA)",
+            "fr": "Français canadien (fr-CA)",
+            "de": "Französisch (Kanada) (fr-CA)",
+            "es": "Francés canadiense (fr-CA)"
+          }
+        },
+        {
+          "value": "fr-CH",
+          "label": {
+            "en": "Swiss French (fr-CH)",
+            "fr": "Français suisse (fr-CH)",
+            "de": "Französisch (Schweiz) (fr-CH)",
+            "es": "Francés suizo (fr-CH)"
+          }
+        },
+        {
+          "value": "fr-FR",
+          "label": {
+            "en": "French (France) (fr-FR)",
+            "fr": "Français (France) (fr-FR)",
+            "de": "Französisch (Frankreich) (fr-FR)",
+            "es": "Francés (Francia) (fr-FR)"
+          }
+        },
+        {
+          "value": "hu",
+          "label": {
+            "en": "Hungarian (hu)",
+            "fr": "Hongrois (hu)",
+            "de": "Ungarisch (hu)",
+            "es": "Húngaro (hu)"
+          }
+        },
+        {
+          "value": "id",
+          "label": {
+            "en": "Indonesian (id)",
+            "fr": "Indonésien (id)",
+            "de": "Indonesisch (id)",
+            "es": "Indonesio (id)"
+          }
+        },
+        {
+          "value": "it-CH",
+          "label": {
+            "en": "Italian (Switzerland) (it-CH)",
+            "fr": "Italien (Suisse) (it-CH)",
+            "de": "Italienisch (Schweiz) (it-CH)",
+            "es": "Italiano (Suiza) (it-CH)"
+          }
+        },
+        {
+          "value": "it-IT",
+          "label": {
+            "en": "Italian (Italy) (it-IT)",
+            "fr": "Italien (Italie) (it-IT)",
+            "de": "Italienisch (Italien) (it-IT)",
+            "es": "Italiano (Italia) (it-IT)"
+          }
+        },
+        {
+          "value": "nl-BE",
+          "label": {
+            "en": "Flemish (nl-BE)",
+            "fr": "Flamand (nl-BE)",
+            "de": "Flämisch (nl-BE)",
+            "es": "Flamenco (nl-BE)"
+          }
+        },
+        {
+          "value": "pl",
+          "label": {
+            "en": "Polish (pl)",
+            "fr": "Polonais (pl)",
+            "de": "Polnisch (pl)",
+            "es": "Polaco (pl)"
+          }
+        },
+        {
+          "value": "pt-BR",
+          "label": {
+            "en": "Brazilian Portuguese (pt-BR)",
+            "fr": "Portugais brésilien (pt-BR)",
+            "de": "Portugiesisch (Brasilien) (pt-BR)",
+            "es": "Portugués de Brasil (pt-BR)"
+          }
+        },
+        {
+          "value": "pt-PT",
+          "label": {
+            "en": "European Portuguese (pt-PT)",
+            "fr": "Portugais européen (pt-PT)",
+            "de": "Portugiesisch (Portugal) (pt-PT)",
+            "es": "Portugués de Portugal (pt-PT)"
+          }
+        },
+        {
+          "value": "ro",
+          "label": {
+            "en": "Romanian (ro)",
+            "fr": "Roumain (ro)",
+            "de": "Rumänisch (ro)",
+            "es": "Rumano (ro)"
+          }
+        },
+        {
+          "value": "tr-TR",
+          "label": {
+            "en": "Turkish (Türkiye) (tr-TR)",
+            "fr": "Turc (Turquie) (tr-TR)",
+            "de": "Türkisch (Türkei) (tr-TR)",
+            "es": "Turco (Turquía) (tr-TR)"
+          }
+        },
+        {
+          "value": "vi",
+          "label": {
+            "en": "Vietnamese (vi)",
+            "fr": "Vietnamien (vi)",
+            "de": "Vietnamesisch (vi)",
+            "es": "Vietnamita (vi)"
+          }
+        },
+        {
+          "value": "zh-Hans",
+          "label": {
+            "en": "Simplified Chinese (zh-Hans)",
+            "fr": "Chinois simplifié (zh-Hans)",
+            "de": "Chinesisch (vereinfacht) (zh-Hans)",
+            "es": "Chino simplificado (zh-Hans)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "language",
+      "type": "select",
+      "label": {
+        "en": "Language of names and states",
+        "fr": "Langue des noms et des états",
+        "de": "Sprache der Namen und Zustände",
+        "es": "Idioma de nombres y estados"
+      },
+      "description": {
+        "en": "Language of the feature names (set when the device is added) and of the texts the device shows.",
+        "fr": "Langue des noms des fonctionnalités (fixés à l'ajout de l'appareil) et des textes affichés par l'appareil.",
+        "de": "Sprache der Funktionsnamen (beim Hinzufügen des Geräts festgelegt) und der Texte, die das Gerät zeigt.",
+        "es": "Idioma de los nombres de las funciones (fijados al añadir el dispositivo) y de los textos que muestra."
+      },
+      "required": false,
+      "default": "fr",
+      "options": [
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "English",
+            "de": "English",
+            "es": "English"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "Français",
+            "fr": "Français",
+            "de": "Français",
+            "es": "Français"
+          }
+        },
+        {
+          "value": "de",
+          "label": {
+            "en": "Deutsch",
+            "fr": "Deutsch",
+            "de": "Deutsch",
+            "es": "Deutsch"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Español",
+            "fr": "Español",
+            "de": "Español",
+            "es": "Español"
+          }
+        }
+      ]
+    },
+    {
+      "key": "refresh_minutes",
+      "type": "select",
+      "label": {
+        "en": "Refresh interval",
+        "fr": "Intervalle de rafraîchissement",
+        "de": "Aktualisierungsintervall",
+        "es": "Intervalo de actualización"
+      },
+      "description": {
+        "en": "How often the shopping list and the week plan are read. Your own changes show at once.",
+        "fr": "Fréquence de lecture de la liste de courses et du planning. Vos propres changements s'affichent aussitôt.",
+        "de": "Wie oft Einkaufsliste und Wochenplan gelesen werden. Deine eigenen Änderungen erscheinen sofort.",
+        "es": "Frecuencia de lectura de la lista y del plan semanal. Sus propios cambios se muestran al instante."
+      },
+      "required": false,
+      "default": "5",
+      "options": [
+        {
+          "value": "2",
+          "label": {
+            "en": "2 minutes",
+            "fr": "2 minutes",
+            "de": "2 Minuten",
+            "es": "2 minutos"
+          }
+        },
+        {
+          "value": "5",
+          "label": {
+            "en": "5 minutes",
+            "fr": "5 minutes",
+            "de": "5 Minuten",
+            "es": "5 minutos"
+          }
+        },
+        {
+          "value": "10",
+          "label": {
+            "en": "10 minutes",
+            "fr": "10 minutes",
+            "de": "10 Minuten",
+            "es": "10 minutos"
+          }
+        },
+        {
+          "value": "15",
+          "label": {
+            "en": "15 minutes",
+            "fr": "15 minutes",
+            "de": "15 Minuten",
+            "es": "15 minutos"
+          }
+        },
+        {
+          "value": "30",
+          "label": {
+            "en": "30 minutes",
+            "fr": "30 minutes",
+            "de": "30 Minuten",
+            "es": "30 minutos"
+          }
+        }
+      ]
     }
   ],
   "actions": [
     {
-      "key": "test_weather",
-      "label": { "en": "Test the weather provider", "fr": "Tester le fournisseur météo" },
-      "timeout_seconds": 30
-    },
-    {
-      "key": "identify",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "fields": [
-        {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
-        }
-      ]
-    }
-  ],
-  "scene_triggers": [
-    {
-      "key": "motion_detected",
-      "label": { "en": "Motion detected", "fr": "Mouvement détecté" },
-      "description": {
-        "en": "A demo motion sensor saw a person or an animal move.",
-        "fr": "Un détecteur de démonstration a vu bouger une personne ou un animal."
+      "key": "test_connection",
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion",
+        "de": "Verbindung testen",
+        "es": "Probar la conexión"
       },
-      "fields": [
-        {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Sensor", "fr": "Détecteur" }
-        },
-        {
-          "key": "target",
-          "type": "multi_select",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" },
-          "options": [
-            { "value": "person", "label": { "en": "Person", "fr": "Personne" } },
-            { "value": "animal", "label": { "en": "Animal", "fr": "Animal" } }
-          ]
-        }
-      ],
-      "variables": [
-        {
-          "key": "target",
-          "type": "string",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" }
-        }
-      ]
+      "timeout_seconds": 60
     }
   ],
   "scene_actions": [
     {
-      "key": "identify_device",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "description": {
-        "en": "Make a device signal itself (the demo light blinks).",
-        "fr": "Fait se signaler un appareil (la lampe de démonstration clignote)."
+      "key": "add_item",
+      "label": {
+        "en": "Add to the Cookidoo list",
+        "fr": "Ajouter à la liste Cookidoo",
+        "de": "Zur Cookidoo-Liste hinzufügen",
+        "es": "Añadir a la lista Cookidoo"
       },
-      "timeout_seconds": 15,
+      "description": {
+        "en": "Adds an item to the shopping list, unless it is already there to buy.",
+        "fr": "Ajoute un article à la liste de courses, sauf s'il y est déjà à acheter.",
+        "de": "Fügt einen Artikel zur Einkaufsliste hinzu, außer er steht schon zum Kaufen darauf.",
+        "es": "Añade un artículo a la lista de la compra, salvo si ya está pendiente de comprar."
+      },
+      "timeout_seconds": 30,
       "fields": [
         {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
+          "key": "name",
+          "type": "string",
+          "label": {
+            "en": "Item",
+            "fr": "Article",
+            "de": "Artikel",
+            "es": "Artículo"
+          },
+          "placeholder": {
+            "en": "e.g. Milk",
+            "fr": "ex. Lait",
+            "de": "z. B. Milch",
+            "es": "p. ej. Leche"
+          },
           "required": true
         }
       ],
       "outputs": [
         {
-          "key": "signalled",
+          "key": "added",
           "type": "boolean",
-          "label": { "en": "Device signalled", "fr": "Appareil signalé" }
+          "label": {
+            "en": "Item added",
+            "fr": "Article ajouté",
+            "de": "Artikel hinzugefügt",
+            "es": "Artículo añadido"
+          }
+        },
+        {
+          "key": "remaining_items",
+          "type": "number",
+          "label": {
+            "en": "Items to buy",
+            "fr": "Articles à acheter",
+            "de": "Zu kaufende Artikel",
+            "es": "Artículos por comprar"
+          }
+        }
+      ]
+    },
+    {
+      "key": "check_item",
+      "label": {
+        "en": "Check a Cookidoo item",
+        "fr": "Cocher un article Cookidoo",
+        "de": "Cookidoo-Artikel abhaken",
+        "es": "Marcar un artículo Cookidoo"
+      },
+      "description": {
+        "en": "Checks an item of the shopping list, found by its name (case and accents ignored).",
+        "fr": "Coche un article de la liste de courses, trouvé par son nom (sans tenir compte des majuscules ni des accents).",
+        "de": "Hakt einen Artikel der Einkaufsliste ab, gefunden über seinen Namen (ohne Groß- und Kleinschreibung).",
+        "es": "Marca un artículo de la lista de la compra, buscado por su nombre (sin mayúsculas ni acentos)."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "name",
+          "type": "string",
+          "label": {
+            "en": "Item",
+            "fr": "Article",
+            "de": "Artikel",
+            "es": "Artículo"
+          },
+          "placeholder": {
+            "en": "e.g. Milk",
+            "fr": "ex. Lait",
+            "de": "z. B. Milch",
+            "es": "p. ej. Leche"
+          },
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "key": "found",
+          "type": "boolean",
+          "label": {
+            "en": "Item found",
+            "fr": "Article trouvé",
+            "de": "Artikel gefunden",
+            "es": "Artículo encontrado"
+          }
+        },
+        {
+          "key": "remaining_items",
+          "type": "number",
+          "label": {
+            "en": "Items to buy",
+            "fr": "Articles à acheter",
+            "de": "Zu kaufende Artikel",
+            "es": "Artículos por comprar"
+          }
+        }
+      ]
+    },
+    {
+      "key": "uncheck_item",
+      "label": {
+        "en": "Uncheck a Cookidoo item",
+        "fr": "Décocher un article Cookidoo",
+        "de": "Cookidoo-Artikel zurücksetzen",
+        "es": "Desmarcar un artículo Cookidoo"
+      },
+      "description": {
+        "en": "Puts a checked item back on the shopping list, found by its name.",
+        "fr": "Remet un article coché sur la liste de courses, trouvé par son nom.",
+        "de": "Setzt einen abgehakten Artikel wieder auf die Einkaufsliste, gefunden über seinen Namen.",
+        "es": "Vuelve a poner en la lista un artículo marcado, buscado por su nombre."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "name",
+          "type": "string",
+          "label": {
+            "en": "Item",
+            "fr": "Article",
+            "de": "Artikel",
+            "es": "Artículo"
+          },
+          "placeholder": {
+            "en": "e.g. Milk",
+            "fr": "ex. Lait",
+            "de": "z. B. Milch",
+            "es": "p. ej. Leche"
+          },
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "key": "found",
+          "type": "boolean",
+          "label": {
+            "en": "Item found",
+            "fr": "Article trouvé",
+            "de": "Artikel gefunden",
+            "es": "Artículo encontrado"
+          }
+        },
+        {
+          "key": "remaining_items",
+          "type": "number",
+          "label": {
+            "en": "Items to buy",
+            "fr": "Articles à acheter",
+            "de": "Zu kaufende Artikel",
+            "es": "Artículos por comprar"
+          }
+        }
+      ]
+    },
+    {
+      "key": "clear_checked_items",
+      "label": {
+        "en": "Clear the checked Cookidoo items",
+        "fr": "Vider les articles cochés Cookidoo",
+        "de": "Abgehakte Cookidoo-Artikel löschen",
+        "es": "Quitar los artículos marcados de Cookidoo"
+      },
+      "description": {
+        "en": "Removes the checked free items, and the recipes whose ingredients are all checked.",
+        "fr": "Retire les articles libres cochés, et les recettes dont tous les ingrédients sont cochés.",
+        "de": "Entfernt die abgehakten freien Artikel und die Rezepte, deren Zutaten alle abgehakt sind.",
+        "es": "Quita los artículos libres marcados y las recetas con todos sus ingredientes marcados."
+      },
+      "timeout_seconds": 30,
+      "outputs": [
+        {
+          "key": "removed_items",
+          "type": "number",
+          "label": {
+            "en": "Items removed",
+            "fr": "Articles retirés",
+            "de": "Entfernte Artikel",
+            "es": "Artículos quitados"
+          }
         }
       ]
     }
   ],
   "widgets": [
     {
-      "key": "demo_status",
-      "label": { "en": "Demo status", "fr": "État de la démo" },
-      "description": {
-        "en": "Live temperature and plug power, plug connection and observed location.",
-        "fr": "Température et puissance en direct, connexion de la prise, position observée."
+      "key": "shopping_list",
+      "label": {
+        "en": "Cookidoo shopping list",
+        "fr": "Liste de courses Cookidoo",
+        "de": "Cookidoo-Einkaufsliste",
+        "es": "Lista de compra Cookidoo"
       },
-      "icon": "activity",
-      "action_timeout_seconds": 15
+      "description": {
+        "en": "Items to buy and checked, with buttons to add, check and clear.",
+        "fr": "Articles à acheter et cochés, avec des boutons pour ajouter, cocher et vider.",
+        "de": "Zu kaufende und abgehakte Artikel, mit Tasten zum Hinzufügen, Abhaken, Löschen.",
+        "es": "Artículos por comprar y marcados, con botones para añadir, marcar y quitar."
+      },
+      "icon": "shopping-cart",
+      "action_timeout_seconds": 30
+    },
+    {
+      "key": "recipe_of_the_day",
+      "label": {
+        "en": "Cookidoo recipe of the day",
+        "fr": "Recette du jour Cookidoo",
+        "de": "Cookidoo-Rezept des Tages",
+        "es": "Receta del día Cookidoo"
+      },
+      "description": {
+        "en": "The recipes planned today in Cookidoo, with picture, time and link.",
+        "fr": "Les recettes prévues aujourd'hui dans Cookidoo, avec photo, temps et lien.",
+        "de": "Die heute in Cookidoo geplanten Rezepte, mit Bild, Zeit und Link.",
+        "es": "Las recetas previstas hoy en Cookidoo, con foto, tiempo y enlace."
+      },
+      "icon": "book-open"
     }
   ]
 }

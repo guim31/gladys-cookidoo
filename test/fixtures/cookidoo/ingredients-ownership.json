@@ -1,0 +1,20 @@
+{
+  "data": [
+    {
+      "id": "01JBQG02JQD3XPFMM5CXE51K25",
+      "isOwned": true,
+      "localId": "com.vorwerk.ingredients.Ingredient-rpf-345",
+      "optional": false,
+      "quantity": {
+        "value": 1
+      },
+      "unit_ref": "132-unit-rdpf3",
+      "preparation": "(40 g)",
+      "unitNotation": "Würfel",
+      "ingredient_ref": "com.vorwerk.ingredients.Ingredient-rpf-345",
+      "ingredientNotation": "Hefe",
+      "shoppingCategory_ref": "ShoppingCategory-rpf-10",
+      "ownedTimestamp": 1730586610
+    }
+  ]
+}

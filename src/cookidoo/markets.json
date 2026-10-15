@@ -1,0 +1,218 @@
+{
+  "ae": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "ar": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "at": {
+    "host": "cookidoo.at",
+    "languages": ["de-AT"]
+  },
+  "au": {
+    "host": "cookidoo.com.au",
+    "languages": ["en-AU"]
+  },
+  "be": {
+    "host": "cookidoo.be",
+    "languages": ["nl-BE", "en", "fr-BE", "de-BE"]
+  },
+  "bn": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "br": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "ca": {
+    "host": "cookidoo.ca",
+    "languages": ["en-CA", "fr-CA"]
+  },
+  "ch": {
+    "host": "cookidoo.ch",
+    "languages": ["en", "fr-CH", "de-CH", "it-CH"]
+  },
+  "cl": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "co": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "cy": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "cz": {
+    "host": "cookidoo.cz",
+    "languages": ["cs"]
+  },
+  "de": {
+    "host": "cookidoo.de",
+    "languages": ["de-DE"]
+  },
+  "dk": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "ee": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "es": {
+    "host": "cookidoo.es",
+    "languages": ["es-ES"]
+  },
+  "fr": {
+    "host": "cookidoo.fr",
+    "languages": ["fr-FR"]
+  },
+  "gb": {
+    "host": "cookidoo.co.uk",
+    "languages": ["en-GB"]
+  },
+  "gr": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "gt": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "hu": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "id": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "ie": {
+    "host": "cookidoo.co.uk",
+    "languages": ["en-GB"]
+  },
+  "il": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "is": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "it": {
+    "host": "cookidoo.it",
+    "languages": ["it-IT"]
+  },
+  "kw": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "lt": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "lu": {
+    "host": "cookidoo.be",
+    "languages": ["nl-BE", "en", "fr-BE", "de-BE"]
+  },
+  "ma": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "mt": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "mx": {
+    "host": "cookidoo.mx",
+    "languages": ["es-MX"]
+  },
+  "my": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "nl": {
+    "host": "cookidoo.be",
+    "languages": ["nl-BE", "en", "fr-BE", "de-BE"]
+  },
+  "no": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "nz": {
+    "host": "cookidoo.com.au",
+    "languages": ["en-AU"]
+  },
+  "pa": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "pe": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "ph": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "pl": {
+    "host": "cookidoo.pl",
+    "languages": ["pl"]
+  },
+  "pt": {
+    "host": "cookidoo.pt",
+    "languages": ["pt-PT"]
+  },
+  "py": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "ro": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "sa": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "se": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "sg": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "th": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "tr": {
+    "host": "cookidoo.com.tr",
+    "languages": ["tr-TR"]
+  },
+  "ua": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "us": {
+    "host": "cookidoo.thermomix.com",
+    "languages": ["en-US"]
+  },
+  "uy": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "vn": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  },
+  "za": {
+    "host": "cookidoo.international",
+    "languages": ["en", "fr", "el", "hu", "id", "pt-BR", "ro", "zh-Hans", "es", "vi"]
+  }
+}
