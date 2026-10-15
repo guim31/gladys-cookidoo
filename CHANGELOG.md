@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-15
+
 ### Added
 
 - Sign-in to a Cookidoo account (e-mail, password, country and language of the
@@ -28,4 +30,5 @@ the notes of the version's GitHub Release.
 - A **Test the connection** button in the Configuration screen.
 - Documentation in English, French, German and Spanish.
 
-[Unreleased]: https://github.com/guim31/gladys-cookidoo/commits/main
+[Unreleased]: https://github.com/guim31/gladys-cookidoo/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/guim31/gladys-cookidoo/releases/tag/v1.0.1
