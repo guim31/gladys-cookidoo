@@ -1,61 +1,162 @@
-# Demo Devices Template
+# Cookidoo
 
-This is the user documentation of the integration. Gladys re-hosts this file
-and shows a permanent **Documentation** link to it in the Configuration screen
-(in the user's language, with English as the fallback) — it is when
-configuring that the user needs it most. Keep the short onboarding hints in
-the `section` blocks of the manifest `config_schema`; put the long
-step-by-step (screenshots, troubleshooting…) here.
+Bring your **Cookidoo** account — the recipe service of the **Thermomix** — into Gladys: the
+shopping list and the week plan become sensors, dashboard widgets and scene actions.
 
-## What you get
+> Not affiliated with Vorwerk. Cookidoo and Thermomix are trademarks of Vorwerk.
+>
+> **Developed without a Cookidoo account: feedback welcome.** The integration follows the protocol
+> of the open-source library [cookidoo-api](https://github.com/miaucl/cookidoo-api), used by Home
+> Assistant, and is tested against its recorded answers, not against a real account yet.
 
-Six demo devices show up after installation: a weather station (real data
-from Open-Meteo), a switch, a dimmable light, a smart plug with power
-metering, a motion sensor and a camera.
+## Overview
+
+- **Shopping list**: the ingredients of the recipes you added to the list and the free items you
+  typed, checked or not; the number of items left to buy.
+- **Week plan**: the recipes planned today (names, total time), and the "recipe of the day" widget.
+- **Subscription**: its type (Premium, trial, free) and its end date.
+- **Scene actions**: add an item ("Add milk" from a button or a voice command), check or uncheck
+  an item, clear the checked items.
+- **Widgets**: the shopping list with buttons to add, check and clear, and the recipe of the day.
+
+## Requirements
+
+- Gladys Assistant **5.2.0** or later (the widget buttons open a short form, which needs 5.2.0).
+- A Cookidoo account signing in with an e-mail and a password, with or without a subscription.
+- Internet access from Gladys: the integration talks to Cookidoo's servers (cloud).
 
 ## Configuration
 
-1. Open the **Configuration** tab of the integration.
-2. Set the **latitude** and **longitude** the demo weather station should
-   observe (they default to Paris), and pick your temperature unit.
-   The **refresh interval** sets how often the weather station and the
-   plug's power are read: every 5 minutes by default, every minute at most.
-3. Save: the devices appear in the **Discovery** tab, ready to be added.
+Install the integration from **Integrations → Install from GitHub**, then fill in:
 
-The **Prefer the local connection** toggle drives the demo plug: it reports
-the channel it actually uses as a badge (local or cloud), with an orange dot
-when it runs degraded (local refused, cloud fallback).
+| Field                        | What to enter                                                                                                                                                              |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| E-mail, Password             | The ones of your Cookidoo account.                                                                                                                                         |
+| Country of the account       | The country chosen when the account was created: it sets the Cookidoo site (cookidoo.fr, cookidoo.de, cookidoo.international for the countries without their own site...). |
+| Cookidoo language            | Language of the recipes and items. _Automatic_ picks the language of the country closest to the next field (French on cookidoo.fr, German on cookidoo.ch...).              |
+| Language of names and states | Language of the feature names (set once, when you add the device) and of the texts the device shows. French by default.                                                    |
+| Refresh interval             | How often the shopping list and the week plan are read: 2 to 30 minutes, 5 by default. Your own changes from Gladys show at once.                                          |
 
-## Actions
+Then go to the **Discover** tab and add the **Cookidoo** device.
 
-- **Test the weather provider** — performs a live request to Open-Meteo and
-  shows the current temperature and humidity under the button.
-- **Identify a device** — pick one of your devices in the list and it will
-  signal itself (the demo light "blinks" in the logs).
+### Test the connection
 
-## Scenes
+The **Test the connection** button signs in again with the password and reads everything: the
+answer says how many items are left, the recipe of the day and the subscription, or why it
+failed. After a refused password, the integration stops signing in on its own (retrying could
+lock the account): fix the password or run this test.
 
-The integration adds its own cards to the scene editor (Gladys 5.1 or
-later), under the **Integrations** category:
+### Data and privacy
 
-- **Motion detected** (trigger) — starts the scene when a demo motion sensor
-  sees something move. Optionally pick the sensor and what moved (person,
-  animal); left empty, any detection matches. The following actions can
-  read what moved with `{{triggerEvent.data.target}}`.
-- **Identify a device** (action) — makes the chosen device signal itself.
-  It returns whether the device could signal itself, so the following
-  actions can depend on it.
+The password stays in the Gladys configuration. The sign-in tokens (valid 12 hours, refreshed
+automatically) and the id of your Cookidoo profile are kept in the integration's data volume
+(`/data/cookidoo.json`, readable by the integration only). Nothing is sent anywhere but to
+Cookidoo, and no password, token or e-mail is ever written in the logs.
 
-## Dashboard
+## The device
 
-Add the **Demo status** widget to a dashboard: it shows the live
-temperature of the weather station and the power of the office plug, the
-connection the plug currently uses (orange when degraded) and the observed
-location. Its **Identify the light** button makes the demo light signal
-itself.
+One **Cookidoo** device per account, with these features (read-only):
+
+| Feature                   | Type            | Value                                                                 |
+| ------------------------- | --------------- | --------------------------------------------------------------------- |
+| Items to buy              | counter         | unchecked items of the shopping list                                  |
+| Checked items             | counter         | checked items, still on the list                                      |
+| Shopping list             | text            | the items to buy, separated by commas ("Empty list" when none)        |
+| Today's recipes           | text            | the recipes planned today in Cookidoo ("No recipe planned" when none) |
+| Number of today's recipes | counter         | how many recipes are planned today                                    |
+| Time of today's recipes   | duration (min)  | total time of today's recipes                                         |
+| Subscription              | text            | Premium, Trial or Free                                                |
+| Subscription end          | text            | end date of the subscription ("None" without one)                     |
+| Subscription days left    | duration (days) | days until the subscription ends, 0 without one                       |
+
+"Today" is the day in the time zone of Gladys.
+
+## Widgets
+
+Add them from the dashboard editor (**Integration widgets**).
+
+### Shopping list (shopping_list)
+
+The number of items to buy and checked, the first eight items (still to buy first, then the
+checked ones with a badge), and four buttons:
+
+- **Add**: type the name of an item;
+- **Check** / **Uncheck**: pick an item in the list;
+- **Clear checked**: removes what was bought (asks for confirmation first).
+
+The Gladys widgets have no checkbox by design: a tap on Check opens a short form whose list
+holds the items to buy.
+
+### Recipe of the day (recipe_of_the_day)
+
+The recipes planned today, with their picture, their time and a link to open them in Cookidoo.
+When nothing is planned today, the next recipes of the week, with their day.
+
+## Scene actions
+
+In a scene, **Add an action → Integrations**. The item name accepts scene variables.
+
+### Add to the Cookidoo list (add_item)
+
+Adds a free item to the shopping list, unless an item of that name is already there to buy; a
+checked item of that name is put back on the list instead of doubled. Outputs: _Item added_
+(yes/no), _Items to buy_.
+
+### Check a Cookidoo item (check_item)
+
+Checks the item of that name (case, accents and a leading article ignored: "du lait" finds
+"Lait"). When several items could match, nothing is checked. Outputs: _Item found_, _Items to
+buy_.
+
+### Uncheck a Cookidoo item (uncheck_item)
+
+Puts a checked item back on the list, found the same way. Outputs: _Item found_, _Items to buy_.
+
+### Clear the checked Cookidoo items (clear_checked_items)
+
+Removes the checked free items, and the recipes whose ingredients are all checked. Cookidoo
+only removes an ingredient with its recipe: a recipe partly bought stays on the list. Output:
+_Items removed_.
+
+## Scene examples
+
+- **"Add milk" from a button**: trigger _a button is pressed_ → action _Add to the Cookidoo list_
+  with `Lait` → _Send a message_ "Milk added, {{items to buy}} items to buy".
+- **Shopping reminder**: every Saturday at 9:00, if _Items to buy_ is above 0 → send a message with
+  the value of the _Shopping list_ feature.
+- **Back from the shop**: when you arrive home on Saturday afternoon → _Clear the checked Cookidoo
+  items_.
+- **Time to cook**: every day at 18:30, if _Number of today's recipes_ is above 0 → message "Tonight:
+  {{today's recipes}} ({{time}} min)".
+- **Subscription**: when _Subscription days left_ goes below 7 → reminder.
+
+## Refresh and API usage
+
+Gladys does not poll this device: the integration reads Cookidoo on its own timer, and only while
+someone looks (the device is added, or a widget was shown in the last hour). Each refresh is two
+requests (shopping list and week plan); the subscription is read every 6 hours; the access token
+is renewed twice a day. With the default 5 minutes, that is about 600 requests a day. Cookidoo
+publishes no quota and no terms for this use: do not set the interval lower than you need. The
+values are published only when they change, plus once every 6 hours.
 
 ## Troubleshooting
 
-The integration logs everything it does: check the integration logs from the
-Gladys UI (or `docker logs` on the host) with `LOG_LEVEL=debug` for the full
-detail.
+- **"Cookidoo refused the sign-in"**: check the e-mail, the password and the country. If Cookidoo
+  asks for a step (new terms of use, an e-mail check), sign in once on the website or in the app,
+  then run **Test the connection**.
+- **"Cookidoo refused the connection of the integration (anti-robot protection)"**: Cookidoo's
+  protection refused the request. The integration never works around it: it waits 30 minutes and
+  tries again. If it lasts, tell us on the forum.
+- **"Cookidoo answered in an unexpected format"**: Cookidoo changed its API; update the integration
+  (and open an issue if no update exists yet).
+- **Empty items or recipes**: check the country and the Cookidoo language.
+- More details: set `LOG_LEVEL=debug` on the integration and read its logs.
+
+## Limits
+
+- Unofficial API: Cookidoo can change it at any time, and the sign-in may then fail until an
+  update.
+- Read every few minutes: a change made in the Cookidoo app shows after the next refresh.
+- Only free items can be added; an ingredient is removed with its recipe.
+- No control of the Thermomix itself, no recipe search, no planning from Gladys.
+- One account per integration.

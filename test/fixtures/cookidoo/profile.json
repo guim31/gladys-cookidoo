@@ -1,0 +1,31 @@
+{
+  "id": "00000000-0000-4000-8000-000000000000",
+  "isPublic": false,
+  "userInfo": {
+    "username": "Test User",
+    "description": "",
+    "picture": "",
+    "pictureTemplate": ""
+  },
+  "savedSearches": [
+    {
+      "id": "default",
+      "search": {
+        "countries": ["ch"],
+        "languages": ["de"],
+        "accessories": [
+          "includingFriend",
+          "includingBladeCover",
+          "includingBladeCoverWithPeeler",
+          "includingCutter",
+          "includingSensor"
+        ]
+      }
+    }
+  ],
+  "foodPreferences": [],
+  "meta": {
+    "cloudinaryPublicId": "61c22d8465a60c86de8ca7ce045665bfa35546d78ba6f971ffbed3780d4fa026"
+  },
+  "thermomixes": []
+}

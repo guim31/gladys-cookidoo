@@ -28,8 +28,23 @@ Gladys before reporting a problem.
 
 ## Scope
 
-In scope: the code of this repository and the Docker image it publishes.
+In scope: the code of this repository and the Docker image it publishes, in
+particular:
+
+- the **Cookidoo password**: entered in the Gladys configuration (a `secret`
+  field, never sent back to the browser), sent only to the Vorwerk identity
+  provider (`ciam.prod.cookidoo.vorwerk-digital.com`) over HTTPS, never written
+  to `/data` nor to the logs;
+- **`/data/cookidoo.json`** (file mode 600): the OAuth access and refresh
+  tokens of the account, the id of its Cookidoo profile, and a hash of the
+  e-mail and country binding them to the account — no password, no e-mail in
+  clear;
+- the **network**: HTTPS only, to the Cookidoo host of the account's country
+  (`cookidoo.fr`, `cookidoo.de`, `cookidoo.international`...), the identity
+  provider above, and `assets.tmecosys.com` for the recipe pictures of the
+  widget. The login redirects are followed to Vorwerk's own hosts only.
+- the logs: no password, token, cookie, e-mail or URL with a query string.
 
 Out of scope: Gladys Assistant itself (see its
 [security policy](https://github.com/GladysAssistant/Gladys/security/policy)),
-and the third-party services and devices the integration talks to.
+and Cookidoo, Vorwerk's service, which this project is not affiliated with.

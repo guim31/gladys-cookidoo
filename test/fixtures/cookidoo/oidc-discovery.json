@@ -1,0 +1,4 @@
+{
+  "authorization_endpoint": "https://ciam.prod.cookidoo.vorwerk-digital.com/authz-srv/authz",
+  "token_endpoint": "https://ciam.prod.cookidoo.vorwerk-digital.com/token-srv/token"
+}
